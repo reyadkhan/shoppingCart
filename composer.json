@@ -1,0 +1,26 @@
+{
+    "name": "webapp/shoppingcart",
+    "description": "Shopping cart plugin for laravel e-commerce applications",
+    "type": "library",
+    "require": {
+        "illuminate/support": "^6.0|^7.0"
+    },
+    "autoload": {
+        "WebApp\\ShoppingCart\\": "src"
+    },
+    "require-dev": {
+
+    },
+    "autoload-dev": {
+
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Reyad Khan",
+            "email": "reyadk2@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev"
+}
