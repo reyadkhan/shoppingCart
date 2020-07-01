@@ -1,18 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: reyad
- * Date: 30-Jun-20
- * Time: 12:31 PM
- */
 
 namespace WebApp\ShoppingCart;
 
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\AliasLoader;
+use WebApp\ShoppingCart\Contracts\Cart;
+use WebApp\ShoppingCart\Facades\Cart as CartFacade;
 
 class ShoppingCartServiceProvider extends ServiceProvider
 {
+    /**
+     * Register bindings
+     *
+     * @var array
+     */
+    public $bindings = [
+        Cart::class => CartManager::class
+    ];
+
     /**
      * Register application services
      *
@@ -21,6 +27,12 @@ class ShoppingCartServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/cart.php', 'cart');
+
+        $this->app->bind('cart', CartManager::class);
+
+        if(class_exists(AliasLoader::class)) {
+            AliasLoader::getInstance()->alias('Cart', CartFacade::class);
+        }
     }
 
     /**
