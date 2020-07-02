@@ -7,13 +7,28 @@
         "illuminate/support": "^6.0|^7.0"
     },
     "autoload": {
-        "WebApp\\ShoppingCart\\": "src"
+        "psr-4": {
+            "WebApp\\ShoppingCart\\": "src"
+        }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.3@dev"
+        "phpunit/phpunit": "^9.2",
+        "orchestra/testbench": "^5.3"
     },
     "autoload-dev": {
-
+        "psr-4": {
+            "WebApp\\ShoppingCart\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "WebApp\\ShoppingCart\\ShoppingCartServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "vendor\\bin\\phpunit"
     },
     "license": "MIT",
     "authors": [

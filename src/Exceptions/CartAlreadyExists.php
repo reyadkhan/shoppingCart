@@ -13,6 +13,6 @@ class CartAlreadyExists extends InvalidArgumentException
      */
     public static function create(string $modelName, $modelKey)
     {
-        return new static("Cart with key {$modelKey} for the model {$modelName} already exist.");
+        return new static("CartItem with key {$modelKey} for the model {$modelName} already exist.");
     }
 }

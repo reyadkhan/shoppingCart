@@ -4,14 +4,15 @@ namespace WebApp\ShoppingCart;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use WebApp\ShoppingCart\Contracts\BuyableModel;
 use WebApp\ShoppingCart\Exceptions\CartAlreadyExists;
 use WebApp\ShoppingCart\Exceptions\CartNotFound;
 use WebApp\ShoppingCart\Exceptions\InvalidCartQuantity;
-use WebApp\ShoppingCart\Contracts\Cart as Contract;
+use WebApp\ShoppingCart\Contracts\Cart;
 use WebApp\ShoppingCart\Exceptions\InvalidModelInstance;
 
-class CartManager implements Contract
+class CartManager implements Cart
 {
     /**
      * @var SessionManager $sessionManager
@@ -20,21 +21,21 @@ class CartManager implements Contract
     protected $sessionManager, $configs;
 
     /**
-     * Cart collection
+     * CartItem collection
      *
      * @var \Illuminate\Support\Collection
-     */
-    protected $carts;
-
-    /**
-     * Current cart
-     *
-     * @var Cart
      */
     protected $cart;
 
     /**
-     * Cart count
+     * Current cart item
+     *
+     * @var CartItem
+     */
+    protected $cartItem;
+
+    /**
+     * CartItem count
      *
      * @var int
      */
@@ -47,8 +48,8 @@ class CartManager implements Contract
     {
         $this->configs = config('cart');
         $this->sessionManager = new SessionManager($this->configs['session_key']);
-        $this->carts = collect($this->sessionManager->get());
-        $this->count = $this->carts->count();
+        $this->cart = collect($this->sessionManager->get());
+        $this->count = $this->cart->count();
     }
 
     /**
@@ -56,23 +57,23 @@ class CartManager implements Contract
      *
      * @param object $model
      * @param int $quantity
-     * @return Cart
+     * @return CartItem
      * @throws CartAlreadyExists
      */
-    public function addItem(object $model, int $quantity = 1): Cart
+    public function addItem(object $model, int $quantity = 1): CartItem
     {
-        if($this->cartExists($model)) {
+        if($this->itemExists($model)) {
             throw CartAlreadyExists::create(get_class($model), $model->getKey());
         }
 
-        $cart = $this->createCart($model);
+        $cartItem = $this->createCartItem($model);
 
-        if($this->cart->quantity != $quantity) {
-            $this->cart->setQuantity($quantity);
+        if($this->cartItem->getQuantity() != $quantity) {
+            $this->cartItem->setQuantity($quantity);
         }
 
-        $this->storeCarts();
-        return $cart;
+        $this->storeCart();
+        return $cartItem;
     }
 
     /**
@@ -96,8 +97,8 @@ class CartManager implements Contract
      */
     protected function removeByKey(int $key): bool
     {
-        $this->carts->forget($key);
-        $this->storeCarts();
+        $this->cart->forget($key);
+        $this->storeCart();
         return true;
     }
 
@@ -106,20 +107,20 @@ class CartManager implements Contract
      *
      * @param object $model
      * @param int $quantity
-     * @return Cart $updatedCart
+     * @return CartItem $updatedCart
      * @throws InvalidCartQuantity
      */
-    public function addQuantity(object $model, int $quantity = 1): Cart
+    public function addQuantity(object $model, int $quantity = 1): CartItem
     {
         $this->checkQuantity($model, $quantity);
 
         $collectionKey = $this->findKey($model);
-        $this->cart = $this->carts->pull($collectionKey);
-        $currentQuantity = $this->cart->getQuantity();
-        $this->cart->setQuantity($currentQuantity + $quantity);
-        $updatedCart = $this->cart;
-        $this->storeCarts();
-        return $updatedCart;
+        $this->cartItem = $this->cart->pull($collectionKey);
+        $currentQuantity = $this->cartItem->getQuantity();
+        $this->cartItem->setQuantity($currentQuantity + $quantity);
+        $updatedCartItem = $this->cartItem;
+        $this->storeCart();
+        return $updatedCartItem;
     }
 
     /**
@@ -127,36 +128,36 @@ class CartManager implements Contract
      *
      * @param object $model
      * @param int $quantity
-     * @return Cart
+     * @return CartItem
      */
-    public function removeQuantity(object $model, int $quantity = 1): Cart
+    public function removeQuantity(object $model, int $quantity = 1): CartItem
     {
         $this->checkQuantity($model, $quantity);
 
         $collectionKey = $this->findKey($model);
-        $cart = $this->carts->pull($collectionKey);
-        $currentQuantity = $cart->getQuantity();
+        $cartItem = $this->cart->pull($collectionKey);
+        $currentQuantity = $cartItem->getQuantity();
         $updatedQuantity = $currentQuantity - $quantity;
 
         if($updatedQuantity <= 0) {
-            $cart->setQuantity(0);
+            $cartItem->setQuantity(0);
         } else {
-            $cart->setQuantity($updatedQuantity);
-            $this->cart = $cart;
+            $cartItem->setQuantity($updatedQuantity);
+            $this->cartItem = $cartItem;
         }
 
-        $this->storeCarts();
-        return $cart;
+        $this->storeCart();
+        return $cartItem;
     }
 
     /**
      * Check quantity if valid
      *
-     * @param $model
-     * @param $quantity
+     * @param object $model
+     * @param int $quantity
      * @throws InvalidCartQuantity
      */
-    protected function checkQuantity($model, $quantity)
+    protected function checkQuantity(object $model, int $quantity): void
     {
         if($quantity <= 0) {
             throw InvalidCartQuantity::create(get_class($model), $model->getKey(), $quantity);
@@ -164,30 +165,30 @@ class CartManager implements Contract
     }
 
     /**
-     * Create a new cart
+     * Create a new cart item
      *
      * @param object $model
-     * @return Cart
+     * @return CartItem
      */
-    protected function createCart(object $model): Cart
+    protected function createCartItem(object $model): CartItem
     {
         $this->checkModel($model);
+
         $modelName = get_class($model);
-        $cart = new Cart($model->getKey(), $modelName);
+        $cartItem = new CartItem($model->getKey(), $modelName);
         $modelAttributeConfig = $this->configs['model_attributes'];
 
         if(array_key_exists($modelName, $modelAttributeConfig)) {
             foreach ($modelAttributeConfig[$modelName] as $attribute) {
-                $cart->$attribute = $model->$attribute;
+                $cartItem->$attribute = $model->$attribute;
             }
         } else {
             foreach ($model->getAttributes() as $attribute => $value) {
-                $cart->$attribute = $value;
+                $cartItem->$attribute = $value;
             }
         }
 
-        $this->setCart($cart);
-        return $this->getCart();
+        return $this->cartItem = $cartItem;
     }
 
     /**
@@ -207,22 +208,24 @@ class CartManager implements Contract
      * Find a cart
      *
      * @param object $model
-     * @return Cart
+     * @return CartItem
      * @throws CartNotFound
      */
-    public function find(object $model): Cart
+    public function find(object $model): CartItem
     {
+        $this->checkModel($model);
+
         $modelName = get_class($model);
         $modelKey = $model->getKey();
 
-        $cart = $this->carts->first(function($cart) use ($modelName, $modelKey) {
-            return $cart->model_name == $modelName && $cart->id == $modelKey;
+        $cartItem = $this->cart->first(function($item) use ($modelName, $modelKey) {
+            return $item->model_name == $modelName && $item->id == $modelKey;
         });
 
-        if( ! $cart) {
+        if( ! $cartItem) {
             throw CartNotFound::create($modelName, $modelName);
         }
-        return $cart;
+        return $cartItem;
     }
 
     /**
@@ -234,11 +237,13 @@ class CartManager implements Contract
      */
     protected function findKey(object $model): int
     {
+        $this->checkModel($model);
+
         $modelName = get_class($model);
         $modelKey = $model->getKey();
 
-        $key = $this->carts->search(function ($cart) use ($modelName, $modelKey) {
-            return $cart->model_name == $modelName && $cart->id == $modelKey;
+        $key = $this->cart->search(function ($item) use ($modelName, $modelKey) {
+            return $item->model_name == $modelName && $item->id == $modelKey;
         });
 
         if($key === false) {
@@ -252,39 +257,31 @@ class CartManager implements Contract
      *
      * @return void
      */
-    public function storeCarts(): void
+    public function storeCart(): void
     {
-        if($this->cart) {
-            $this->carts->add($this->cart);
-            $this->cart = null;
+        if($this->cartItem) {
+            $this->cart->add($this->cartItem);
+            $this->cartItem = null;
         }
 
-        $this->sessionManager->add($this->carts);
-        $this->count = $this->carts->count();
+        $this->sessionManager->add($this->cart);
+        $this->count = $this->cart->count();
     }
 
     /**
-     * Get current cart object
+     * Destroy cart
      *
-     * @return Cart
+     * @return void
      */
-    public function getCart(): Cart
+    public function destroy(): void
     {
-        return $this->cart;
+        $this->sessionManager->remove();
+        $this->cartItem = null;
+        $this->cart = collect();
     }
 
     /**
-     * Set current curt object
-     *
-     * @param Cart $cart
-     */
-    public function setCart(Cart $cart)
-    {
-        $this->cart = $cart;
-    }
-
-    /**
-     * Get carts count
+     * Get items count
      *
      * @return int
      */
@@ -294,25 +291,46 @@ class CartManager implements Contract
     }
 
     /**
-     * Get all cart element
+     * Get all cart items
      *
      * @return Collection
      */
     public function get(): collection
     {
-        return $this->carts;
+        return $this->cart;
     }
 
     /**
-     * Check cart already exist
+     * Check item already exist
      *
      * @param object $model
      * @return bool
      */
-    public function cartExists(object $model): bool
+    public function itemExists(object $model): bool
     {
-        return $this->carts->contains(function ($cart) use ($model) {
-            return $cart->model_name == get_class($model) && $cart->id == $model->getKey();
+        if( ! $this->isValidModel($model)) {
+            return false;
+        }
+
+        return $this->cart->contains(function ($item) use ($model) {
+            return $item->model_name == get_class($model) && $item->id == $model->getKey();
         });
+    }
+
+    /**
+     * Check if model is valid
+     *
+     * @param object $model
+     * @return bool
+     */
+    protected function isValidModel(object $model): bool
+    {
+        try{
+            $this->checkModel($model);
+        } catch (InvalidModelInstance $e) {
+            report($e);
+            return false;
+        }
+        return true;
     }
 }

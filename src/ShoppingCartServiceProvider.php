@@ -2,7 +2,6 @@
 
 namespace WebApp\ShoppingCart;
 
-
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use WebApp\ShoppingCart\Contracts\Cart;
@@ -30,9 +29,7 @@ class ShoppingCartServiceProvider extends ServiceProvider
 
         $this->app->bind('cart', CartManager::class);
 
-        if(class_exists(AliasLoader::class)) {
-            AliasLoader::getInstance()->alias('Cart', CartFacade::class);
-        }
+        AliasLoader::getInstance()->alias('Cart', CartFacade::class);
     }
 
     /**

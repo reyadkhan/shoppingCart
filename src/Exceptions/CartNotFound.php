@@ -6,8 +6,13 @@ use InvalidArgumentException;
 
 class CartNotFound extends InvalidArgumentException
 {
+    /**
+     * @param string $modelName
+     * @param $modelKey
+     * @return CartNotFound
+     */
     public static function create(string $modelName, $modelKey)
     {
-        return new static("Cart is not found for model {$modelName} with key {$modelKey}");
+        return new static("CartItem is not found for model {$modelName} with key {$modelKey}", 404);
     }
 }

@@ -2,14 +2,13 @@
 
 namespace WebApp\ShoppingCart;
 
-
-class Cart
+class CartItem
 {
     protected $id, $model_name, $quantity;
     protected $attributes = [];
 
     /**
-     * Cart constructor.
+     * CartItem constructor.
      *
      * @param int|string $id
      * @param string $model_name
@@ -23,6 +22,8 @@ class Cart
     }
 
     /**
+     * Get cart id attribute
+     *
      * @return int|string
      */
     public function getId()
@@ -31,6 +32,8 @@ class Cart
     }
 
     /**
+     * Set cart id attribute
+     *
      * @param $id
      */
     public function setId($id): void
@@ -39,6 +42,8 @@ class Cart
     }
 
     /**
+     * Get cart quantity
+     *
      * @return int
      */
     public function getQuantity(): int
@@ -47,6 +52,8 @@ class Cart
     }
 
     /**
+     * Set cart quantity
+     *
      * @param int $quantity
      */
     public function setQuantity(int $quantity): void
@@ -55,6 +62,8 @@ class Cart
     }
 
     /**
+     * Get cart attributes
+     *
      * @return array
      */
     public function getAttributes()
@@ -67,6 +76,8 @@ class Cart
     }
 
     /**
+     * Set cart attribute
+     *
      * @param string $key
      * @param mixed $value
      */

@@ -2,7 +2,6 @@
 
 namespace WebApp\ShoppingCart;
 
-
 class SessionManager
 {
     /**
