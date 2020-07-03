@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2ce5c2393c01abc0cb71390da7daaa7",
+    "content-hash": "f7db10462f0fafa6908d88e2bb8331a2",
     "packages": [
         {
             "name": "brick/math",
@@ -329,12 +329,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "a1fdd536c542dabbe9882f50e849cc177dc0ad88"
+                "reference": "2bdb7130a345bda60e4f5b1cecfae03854adae7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/a1fdd536c542dabbe9882f50e849cc177dc0ad88",
-                "reference": "a1fdd536c542dabbe9882f50e849cc177dc0ad88",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2bdb7130a345bda60e4f5b1cecfae03854adae7d",
+                "reference": "2bdb7130a345bda60e4f5b1cecfae03854adae7d",
                 "shasum": ""
             },
             "require": {
@@ -478,7 +478,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-07-01T14:11:56+00:00"
+            "time": "2020-07-03T16:24:41+00:00"
         },
         {
             "name": "league/commonmark",
@@ -1397,12 +1397,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "26c7bc94089a66bec79ab41156af2c98391fa571"
+                "reference": "b4a1dc28ea47a5b7dff358aa1f1aba2028bf7816"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/26c7bc94089a66bec79ab41156af2c98391fa571",
-                "reference": "26c7bc94089a66bec79ab41156af2c98391fa571",
+                "url": "https://api.github.com/repos/symfony/console/zipball/b4a1dc28ea47a5b7dff358aa1f1aba2028bf7816",
+                "reference": "b4a1dc28ea47a5b7dff358aa1f1aba2028bf7816",
                 "shasum": ""
             },
             "require": {
@@ -1488,7 +1488,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-30T17:42:41+00:00"
+            "time": "2020-07-01T12:12:45+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -1998,12 +1998,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "fac9cbfb843d37a739882ffe82c8d301ce04334e"
+                "reference": "c99e9d14d9cb164acc4c2d26729e735ef75efbff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/fac9cbfb843d37a739882ffe82c8d301ce04334e",
-                "reference": "fac9cbfb843d37a739882ffe82c8d301ce04334e",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/c99e9d14d9cb164acc4c2d26729e735ef75efbff",
+                "reference": "c99e9d14d9cb164acc4c2d26729e735ef75efbff",
                 "shasum": ""
             },
             "require": {
@@ -2103,7 +2103,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-06-22T12:34:19+00:00"
+            "time": "2020-07-01T14:42:25+00:00"
         },
         {
             "name": "symfony/mime",
@@ -4230,12 +4230,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "664187301bfbc87e686df212094e6817805c3ab8"
+                "reference": "41f77e86971e4abaca59b1c7de22cd04ac1bce27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/664187301bfbc87e686df212094e6817805c3ab8",
-                "reference": "664187301bfbc87e686df212094e6817805c3ab8",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/41f77e86971e4abaca59b1c7de22cd04ac1bce27",
+                "reference": "41f77e86971e4abaca59b1c7de22cd04ac1bce27",
                 "shasum": ""
             },
             "require": {
@@ -4274,7 +4274,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-06-27T17:33:53+00:00"
+            "time": "2020-07-03T06:45:43+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -4328,12 +4328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "451c3cd1418cf640de218914901e51b064abb093"
+                "reference": "69782012a282be8cc263fd56a8b19341b88cc4b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/451c3cd1418cf640de218914901e51b064abb093",
-                "reference": "451c3cd1418cf640de218914901e51b064abb093",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/69782012a282be8cc263fd56a8b19341b88cc4b4",
+                "reference": "69782012a282be8cc263fd56a8b19341b88cc4b4",
                 "shasum": ""
             },
             "require": {
@@ -4383,7 +4383,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-03-05T15:02:03+00:00"
+            "time": "2020-07-02T09:43:19+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -4741,12 +4741,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fab8e5c462e88280ec2e0bc31eb28598ac252b4f"
+                "reference": "58bf4a08fa4ccfe5aab5a221af9ae0fd4915bca8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fab8e5c462e88280ec2e0bc31eb28598ac252b4f",
-                "reference": "fab8e5c462e88280ec2e0bc31eb28598ac252b4f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/58bf4a08fa4ccfe5aab5a221af9ae0fd4915bca8",
+                "reference": "58bf4a08fa4ccfe5aab5a221af9ae0fd4915bca8",
                 "shasum": ""
             },
             "require": {
@@ -4831,7 +4831,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-30T14:49:32+00:00"
+            "time": "2020-07-03T09:36:15+00:00"
         },
         {
             "name": "sebastian/code-unit",
@@ -4839,12 +4839,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/code-unit.git",
-                "reference": "c14c66a8f82146dc626b5e915098b6a2e0a93b12"
+                "reference": "50f142d64dde1b2dcc2f5a6bcc5a9817a3eedf75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/code-unit/zipball/c14c66a8f82146dc626b5e915098b6a2e0a93b12",
-                "reference": "c14c66a8f82146dc626b5e915098b6a2e0a93b12",
+                "url": "https://api.github.com/repos/sebastianbergmann/code-unit/zipball/50f142d64dde1b2dcc2f5a6bcc5a9817a3eedf75",
+                "reference": "50f142d64dde1b2dcc2f5a6bcc5a9817a3eedf75",
                 "shasum": ""
             },
             "require": {
@@ -4883,7 +4883,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-28T12:06:41+00:00"
+            "time": "2020-07-03T09:40:29+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

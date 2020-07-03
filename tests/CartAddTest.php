@@ -67,6 +67,16 @@ class CartAddTest extends TestInit
     /**
      * @test
      */
+    public function can_return_updated_item()
+    {
+        Cart::addItem($this->model);
+        $cartItem = Cart::addQuantity($this->model, 3);
+        $this->assertEquals($this->model->id, $cartItem->id);
+    }
+
+    /**
+     * @test
+     */
     public function can_fail_invalid_quantity()
     {
         Cart::addItem($this->model);

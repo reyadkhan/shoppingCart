@@ -59,4 +59,15 @@ class CartRemoveTest extends TestInit
         Cart::removeQuantity($this->nonEloquentModel);
         $this->assertEquals(false, Cart::itemExists($this->nonEloquentModel));
     }
+
+    /**
+     * @test
+     */
+    public function can_return_currently_updated_item()
+    {
+        Cart::addItem($this->model);
+        $this->assertEquals(true, Cart::itemExists($this->model));
+        $removedItem = Cart::removeQuantity($this->model);
+        $this->assertEquals($this->model->id, $removedItem->id);
+    }
 }
