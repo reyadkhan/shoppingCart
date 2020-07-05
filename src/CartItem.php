@@ -68,11 +68,7 @@ class CartItem
      */
     public function getAttributes()
     {
-        return [
-            'id' => $this->id,
-            'quantity' => $this->quantity,
-            extract($this->attributes)
-        ];
+        return $this->attributes;
     }
 
     /**

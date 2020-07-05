@@ -14,8 +14,9 @@ class Cart extends Facade
      *
      * @method static Collection get()
      * @method static CartItem find(object $model)
-     * @method static CartItem addItem(object $model, int $quantity = 1)
-     * @method static bool removeItem(object $model)
+     * @method static CartItem add(object $model, int $quantity = 1)
+     * @method static bool remove(object $model)
+     * @method static CartItem update(object $model, int $quantity)
      * @method static CartItem addQuantity(Object $model, int $quantity = 1)
      * @method static CartItem removeQuantity(object $model, int $quantity = 1)
      * @method static bool itemExists(object $model)

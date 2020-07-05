@@ -3,6 +3,7 @@
 namespace WebApp\ShoppingCart\Tests;
 
 
+use WebApp\ShoppingCart\Exceptions\InvalidModelInstance;
 use WebApp\ShoppingCart\Facades\Cart;
 
 class CartReadTest extends TestInit
@@ -12,8 +13,8 @@ class CartReadTest extends TestInit
      */
     public function can_get_all_items()
     {
-        Cart::addItem($this->model);
-        Cart::addItem($this->nonEloquentModel);
+        Cart::add($this->model);
+        Cart::add($this->nonEloquentModel);
         $this->assertEquals(2, Cart::get()->count());
     }
 
@@ -22,8 +23,17 @@ class CartReadTest extends TestInit
      */
     public function can_find_single_item()
     {
-        Cart::addItem($this->nonEloquentModel);
+        Cart::add($this->nonEloquentModel);
         $this->assertEquals($this->nonEloquentModel->id, Cart::find($this->nonEloquentModel)->id);
+    }
+
+    /**
+     * @test
+     */
+    public function can_return_null_if_item_does_not_find()
+    {
+        Cart::add($this->nonEloquentModel);
+        $this->assertNull(Cart::find($this->model));
     }
 
     /**
@@ -31,8 +41,8 @@ class CartReadTest extends TestInit
      */
     public function can_count_cart_item()
     {
-        Cart::addItem($this->model);
-        Cart::addItem($this->nonEloquentModel);
+        Cart::add($this->model);
+        Cart::add($this->nonEloquentModel);
         $this->assertEquals(2, Cart::count());
     }
 
@@ -41,17 +51,27 @@ class CartReadTest extends TestInit
      */
     public function can_check_if_item_exists()
     {
-        Cart::addItem($this->model);
+        Cart::add($this->model);
         $this->assertEquals(true, Cart::itemExists($this->model));
     }
 
     /**
      * @test
      */
-    public function can_check_item_exist_with_invalid_model()
+    public function can_check_if_item_not_exists()
     {
-        Cart::addItem($this->model);
-        $this->assertEquals(false, Cart::itemExists($this->nonBuyableModel));
+        Cart::add($this->model);
+        $this->assertEquals(false, Cart::itemExists($this->nonEloquentModel));
+    }
+
+    /**
+     * @test
+     */
+    public function can_fail_item_exists_with_invalid_model()
+    {
+        Cart::add($this->model);
+        $this->expectException(InvalidModelInstance::class);
+        Cart::itemExists($this->nonBuyableModel);
     }
 
     /**
@@ -59,8 +79,8 @@ class CartReadTest extends TestInit
      */
     public function can_destroy_cart()
     {
-        Cart::addItem($this->nonEloquentModel);
-        Cart::addItem($this->model);
+        Cart::add($this->nonEloquentModel);
+        Cart::add($this->model);
         $this->assertEquals(2, Cart::count());
         Cart::destroy();
         $this->assertEquals(true, Cart::get()->isEmpty());

@@ -4,7 +4,6 @@ namespace WebApp\ShoppingCart;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use WebApp\ShoppingCart\Contracts\BuyableModel;
 use WebApp\ShoppingCart\Exceptions\CartAlreadyExists;
 use WebApp\ShoppingCart\Exceptions\CartNotFound;
@@ -26,13 +25,6 @@ class CartManager implements Cart
      * @var \Illuminate\Support\Collection
      */
     protected $cart;
-
-    /**
-     * Current cart item
-     *
-     * @var CartItem
-     */
-    protected $cartItem;
 
     /**
      * CartItem count
@@ -58,20 +50,19 @@ class CartManager implements Cart
      * @param object $model
      * @param int $quantity
      * @return CartItem
-     * @throws CartAlreadyExists
+     * @throws InvalidCartQuantity | InvalidModelInstance | CartAlreadyExists
      */
-    public function addItem(object $model, int $quantity = 1): CartItem
+    public function add(object $model, int $quantity = 1): CartItem
     {
-        if($this->itemExists($model)) {
-            throw CartAlreadyExists::create(get_class($model), $model->getKey());
-        }
+        $this->checkQuantity($model, $quantity);
 
         $cartItem = $this->createCartItem($model);
 
-        if($this->cartItem->getQuantity() != $quantity) {
-            $this->cartItem->setQuantity($quantity);
+        if($cartItem->getQuantity() != $quantity) {
+            $cartItem->setQuantity($quantity);
         }
 
+        $this->cart->add($cartItem);
         $this->storeCart();
         return $cartItem;
     }
@@ -81,12 +72,41 @@ class CartManager implements Cart
      *
      * @param object $model
      * @return bool
+     * @throws InvalidModelInstance | CartNotFound
      */
-    public function removeItem(object $model): bool
+    public function remove(object $model): bool
     {
-        $collectionKey = $this->findKey($model);
+        $collectionKey = $this->getKey($model);
         $this->removeByKey($collectionKey);
         return true;
+    }
+
+    /**
+     * Update existing cart item
+     *
+     * @param object $model
+     * @param int|null $quantity
+     * @return CartItem
+     * @throws InvalidCartQuantity | InvalidModelInstance | CartNotFound
+     */
+    public function update(object $model, int $quantity = null): CartItem
+    {
+        if( ! is_null($quantity)) {
+            $this->checkQuantity($model, $quantity);
+        }
+
+        $cartItem = $this->getItem($model);
+
+        foreach($cartItem->getAttributes() as $attribute => $value) {
+            $cartItem->{$attribute} = $model->{$attribute};
+        }
+
+        if($quantity) {
+            $cartItem->setQuantity($quantity);
+        }
+
+        $this->storeCart();
+        return $cartItem;
     }
 
     /**
@@ -108,19 +128,16 @@ class CartManager implements Cart
      * @param object $model
      * @param int $quantity
      * @return CartItem $updatedCart
-     * @throws InvalidCartQuantity
+     * @throws InvalidModelInstance | InvalidCartQuantity | CartNotFound
      */
     public function addQuantity(object $model, int $quantity = 1): CartItem
     {
         $this->checkQuantity($model, $quantity);
 
-        $collectionKey = $this->findKey($model);
-        $this->cartItem = $this->cart->pull($collectionKey);
-        $currentQuantity = $this->cartItem->getQuantity();
-        $this->cartItem->setQuantity($currentQuantity + $quantity);
-        $updatedCartItem = $this->cartItem;
+        $cartItem = $this->getItem($model);
+        $cartItem->setQuantity($cartItem->getQuantity() + $quantity);
         $this->storeCart();
-        return $updatedCartItem;
+        return $cartItem;
     }
 
     /**
@@ -129,24 +146,23 @@ class CartManager implements Cart
      * @param object $model
      * @param int $quantity
      * @return CartItem
+     * @throws InvalidCartQuantity | InvalidModelInstance | CartNotFound
      */
     public function removeQuantity(object $model, int $quantity = 1): CartItem
     {
         $this->checkQuantity($model, $quantity);
 
-        $collectionKey = $this->findKey($model);
-        $cartItem = $this->cart->pull($collectionKey);
-        $currentQuantity = $cartItem->getQuantity();
-        $updatedQuantity = $currentQuantity - $quantity;
+        $cartItem = $this->getItem($model);
+        $updatedQuantity = $cartItem->getQuantity() - $quantity;
 
         if($updatedQuantity <= 0) {
             $cartItem->setQuantity(0);
+            $this->remove($model);
         } else {
             $cartItem->setQuantity($updatedQuantity);
-            $this->cartItem = $cartItem;
+            $this->storeCart();
         }
 
-        $this->storeCart();
         return $cartItem;
     }
 
@@ -160,7 +176,7 @@ class CartManager implements Cart
     protected function checkQuantity(object $model, int $quantity): void
     {
         if($quantity <= 0) {
-            throw InvalidCartQuantity::create(get_class($model), $model->getKey(), $quantity);
+            throw InvalidCartQuantity::create(get_class($model), $quantity);
         }
     }
 
@@ -169,10 +185,13 @@ class CartManager implements Cart
      *
      * @param object $model
      * @return CartItem
+     * @throws InvalidModelInstance | CartAlreadyExists
      */
     protected function createCartItem(object $model): CartItem
     {
-        $this->checkModel($model);
+        if($this->itemExists($model)) {
+            throw CartAlreadyExists::create(get_class($model), $model->getKey());
+        }
 
         $modelName = get_class($model);
         $cartItem = new CartItem($model->getKey(), $modelName);
@@ -188,7 +207,7 @@ class CartManager implements Cart
             }
         }
 
-        return $this->cartItem = $cartItem;
+        return $cartItem;
     }
 
     /**
@@ -205,27 +224,36 @@ class CartManager implements Cart
     }
 
     /**
-     * Find a cart
+     * Get a cart item
      *
      * @param object $model
      * @return CartItem
-     * @throws CartNotFound
+     * @throws InvalidModelInstance | CartNotFound
      */
-    public function find(object $model): CartItem
+    protected function getItem(object $model): CartItem
+    {
+        $item = $this->find($model);
+
+        if( ! $item) {
+            throw CartNotFound::create(get_class($model), $model->getKey());
+        }
+        return $item;
+    }
+
+    /**
+     * Find a cart
+     *
+     * @param object $model
+     * @return CartItem | null
+     * @throws InvalidModelInstance
+     */
+    public function find(object $model)
     {
         $this->checkModel($model);
 
-        $modelName = get_class($model);
-        $modelKey = $model->getKey();
-
-        $cartItem = $this->cart->first(function($item) use ($modelName, $modelKey) {
-            return $item->model_name == $modelName && $item->id == $modelKey;
+        return $this->cart->first(function($item) use ($model) {
+            return $item->model_name == get_class($model) && $item->id == $model->getKey();
         });
-
-        if( ! $cartItem) {
-            throw CartNotFound::create($modelName, $modelName);
-        }
-        return $cartItem;
     }
 
     /**
@@ -233,9 +261,9 @@ class CartManager implements Cart
      *
      * @param object $model
      * @return int
-     * @throws CartNotFound
+     * @throws InvalidModelInstance | CartNotFound
      */
-    protected function findKey(object $model): int
+    protected function getKey(object $model): int
     {
         $this->checkModel($model);
 
@@ -257,15 +285,10 @@ class CartManager implements Cart
      *
      * @return void
      */
-    public function storeCart(): void
+    protected function storeCart(): void
     {
-        if($this->cartItem) {
-            $this->cart->add($this->cartItem);
-            $this->cartItem = null;
-        }
-
         $this->sessionManager->add($this->cart);
-        $this->count = $this->cart->count();
+        $this->count = $this->count();
     }
 
     /**
@@ -276,8 +299,8 @@ class CartManager implements Cart
     public function destroy(): void
     {
         $this->sessionManager->remove();
-        $this->cartItem = null;
         $this->cart = collect();
+        $this->count = 0;
     }
 
     /**
@@ -287,7 +310,7 @@ class CartManager implements Cart
      */
     public function count(): int
     {
-        return $this->count;
+        return $this->cart->count();
     }
 
     /**
@@ -305,32 +328,10 @@ class CartManager implements Cart
      *
      * @param object $model
      * @return bool
+     * @throws InvalidModelInstance
      */
     public function itemExists(object $model): bool
     {
-        if( ! $this->isValidModel($model)) {
-            return false;
-        }
-
-        return $this->cart->contains(function ($item) use ($model) {
-            return $item->model_name == get_class($model) && $item->id == $model->getKey();
-        });
-    }
-
-    /**
-     * Check if model is valid
-     *
-     * @param object $model
-     * @return bool
-     */
-    protected function isValidModel(object $model): bool
-    {
-        try{
-            $this->checkModel($model);
-        } catch (InvalidModelInstance $e) {
-            report($e);
-            return false;
-        }
-        return true;
+        return $this->find($model) ? true : false;
     }
 }

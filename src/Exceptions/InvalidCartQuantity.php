@@ -8,12 +8,11 @@ class InvalidCartQuantity extends InvalidArgumentException
 {
     /**
      * @param string $modelName
-     * @param $modelKey
      * @param int $quantity
      * @return InvalidCartQuantity
      */
-    public static function create(string $modelName, $modelKey, int $quantity)
+    public static function create(string $modelName, int $quantity)
     {
-        return new static("Invalid cart quantity '{$quantity}' for model {$modelName} key '{$modelKey}'. Quantity should be greater than 0.");
+        return new static("Invalid cart quantity '{$quantity}' for model {$modelName}. Quantity should be greater than 0.");
     }
 }

@@ -22,10 +22,10 @@ interface Cart
      * Find a cart item
      *
      * @param object $model
-     * @return CartItem
+     * @return CartItem | null
      * @throws InvalidModelInstance | CartNotFound
      */
-    public function find(object $model): CartItem;
+    public function find(object $model);
 
     /**
      * Add new item to cart
@@ -33,9 +33,9 @@ interface Cart
      * @param object $model
      * @param int $quantity
      * @return CartItem
-     * @throws InvalidModelInstance | CartAlreadyExists
+     * @throws InvalidModelInstance | CartAlreadyExists | InvalidCartQuantity
      */
-    public function addItem(object $model, int $quantity = 1): CartItem;
+    public function add(object $model, int $quantity = 1): CartItem;
 
     /**
      * Remove an item from cart
@@ -44,7 +44,17 @@ interface Cart
      * @return bool
      * @throws InvalidModelInstance | CartNotFound
      */
-    public function removeItem(object $model): bool;
+    public function remove(object $model): bool;
+
+    /**
+     * Update cart item
+     *
+     * @param object $model CartItem model
+     * @param int | null $quantity CartItem quantity
+     * @return CartItem
+     * @throws InvalidModelInstance | InvalidCartQuantity | CartNotFound
+     */
+    public function update(object $model, int $quantity = null): CartItem;
 
     /**
      * Add quantity of existing item
@@ -71,6 +81,7 @@ interface Cart
      *
      * @param object $model
      * @return bool
+     * @throws InvalidModelInstance
      */
     public function itemExists(object $model): bool;
 
