@@ -20,7 +20,7 @@ class CartManager implements Cart
     protected $sessionManager, $configs;
 
     /**
-     * CartItem collection
+     * CartItem Collection
      *
      * @var \Illuminate\Support\Collection
      */
@@ -318,9 +318,11 @@ class CartManager implements Cart
      *
      * @return Collection
      */
-    public function get(): collection
+    public function get(): Collection
     {
-        return $this->cart;
+        $cart = clone $this->cart;
+        $cart->count = $this->count;
+        return $cart;
     }
 
     /**

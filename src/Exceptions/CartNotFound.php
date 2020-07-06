@@ -13,6 +13,6 @@ class CartNotFound extends InvalidArgumentException
      */
     public static function create(string $modelName, $modelKey)
     {
-        return new static("CartItem is not found for model {$modelName} with key {$modelKey}", 404);
+        return new static("Cart item is not found for model {$modelName} with key {$modelKey}", 404);
     }
 }
