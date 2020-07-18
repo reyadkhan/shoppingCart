@@ -4,21 +4,23 @@ namespace WebApp\ShoppingCart;
 
 class CartItem
 {
-    protected $id, $model_name, $quantity;
+    protected $id, $model_name, $quantity, $price;
     protected $attributes = [];
-
+    
     /**
      * CartItem constructor.
      *
      * @param int|string $id
      * @param string $model_name
+     * @param float $price
      * @param int $quantity
      */
-    public function __construct($id, string $model_name, int $quantity = 1)
+    public function __construct($id, string $model_name, float $price, int $quantity = 1)
     {
         $this->id = $id;
         $this->model_name = $model_name;
         $this->quantity = $quantity;
+        $this->price = $price;
     }
 
     /**
@@ -59,6 +61,36 @@ class CartItem
     public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
+    }
+    
+    /**
+     * Get cart price
+     *
+     * @return float
+     */
+    public function getPrice(): float
+    {
+        return $this->price;
+    }
+    
+    /**
+     * Set cart price
+     *
+     * @param float $price
+     */
+    public function setPrice(float $price)
+    {
+        $this->price = $price;
+    }
+    
+    /**
+     * Get total price
+     *
+     * @return float
+     */
+    public function getTotal(): float
+    {
+        return $this->price * $this->quantity;
     }
 
     /**

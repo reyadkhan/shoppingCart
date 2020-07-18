@@ -72,8 +72,12 @@ class TestInit extends TestCase
             'model_attributes' => [
 
                 'WebApp\ShoppingCart\Tests\Models\Product' => [
-                    'name', 'price', 'image'
+                    'name', 'image'
                 ]
+            ],
+            
+            'model_price' => [
+                'WebApp\ShoppingCart\Tests\Models\BuyableProduct' => 'price_vat_inc'
             ]
         ]);
     }

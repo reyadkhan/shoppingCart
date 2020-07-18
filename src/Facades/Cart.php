@@ -19,6 +19,7 @@ class Cart extends Facade
      * @method static CartItem update(object $model, int $quantity)
      * @method static CartItem addQuantity(Object $model, int $quantity = 1)
      * @method static CartItem removeQuantity(object $model, int $quantity = 1)
+     * @method static float total(int $precision = 2)
      * @method static bool itemExists(object $model)
      * @method static int count()
      * @method static void destroy()

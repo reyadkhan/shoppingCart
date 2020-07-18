@@ -165,6 +165,19 @@ class CartManager implements Cart
 
         return $cartItem;
     }
+    
+    /**
+     * Cart total
+     *
+     * @param int $precision round precision for float
+     * @return float
+     */
+    public function total(int $precision = 2): float
+    {
+        return round($this->cart->sum(function (CartItem $cartItem) {
+            return $cartItem->getTotal();
+        }), $precision);
+    }
 
     /**
      * Check quantity if valid
@@ -194,7 +207,8 @@ class CartManager implements Cart
         }
 
         $modelName = get_class($model);
-        $cartItem = new CartItem($model->getKey(), $modelName);
+        $price = $model->{$this->configs['model_price'][$modelName] ?? 'price'};
+        $cartItem = new CartItem($model->getKey(), $modelName, $price);
         $modelAttributeConfig = $this->configs['model_attributes'];
 
         if(array_key_exists($modelName, $modelAttributeConfig)) {

@@ -21,9 +21,16 @@ return[
         // you can put your model and expected attributes those you want to store in cart session and show in cart page
 
 //        'App\Product' => [
-//            'name', 'vendor', 'price', 'image'
+//            'name', 'vendor', 'image'
 //        ]
 
+    ],
+    
+    'model_price' => [
+        
+        // You can put here model price attribute. By default it is price. This attribute will be store as cart price
+        
+//        'App\Product' => 'price'
     ]
 
 ];

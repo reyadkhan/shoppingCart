@@ -45,6 +45,16 @@ class CartReadTest extends TestInit
         Cart::add($this->nonEloquentModel);
         $this->assertEquals(2, Cart::count());
     }
+    
+    /**
+     * @test
+     */
+    public function can_get_total_price()
+    {
+        Cart::add($this->model, 2);
+        Cart::add($this->nonEloquentModel);
+        $this->assertEquals(($this->model->price * 2) + $this->nonEloquentModel->price_vat_inc, Cart::total());
+    }
 
     /**
      * @test
