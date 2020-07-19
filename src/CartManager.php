@@ -49,15 +49,22 @@ class CartManager implements Cart
      *
      * @param object $model
      * @param int $quantity
+     * @param array $options
      * @return CartItem
      * @throws InvalidCartQuantity | InvalidModelInstance | CartAlreadyExists
      */
-    public function add(object $model, int $quantity = 1): CartItem
+    public function add(object $model, int $quantity = 1, array $options = []): CartItem
     {
         $this->checkQuantity($model, $quantity);
 
         $cartItem = $this->createCartItem($model);
 
+        if($options) {
+            foreach ($options as $option => $value) {
+                $cartItem->setAttribute($option, $value);
+            }
+        }
+        
         if($cartItem->getQuantity() != $quantity) {
             $cartItem->setQuantity($quantity);
         }
@@ -86,10 +93,11 @@ class CartManager implements Cart
      *
      * @param object $model
      * @param int|null $quantity
+     * @param array $options
      * @return CartItem
      * @throws InvalidCartQuantity | InvalidModelInstance | CartNotFound
      */
-    public function update(object $model, int $quantity = null): CartItem
+    public function update(object $model, int $quantity = null, array $options = []): CartItem
     {
         if( ! is_null($quantity)) {
             $this->checkQuantity($model, $quantity);
@@ -99,6 +107,12 @@ class CartManager implements Cart
 
         foreach($cartItem->getAttributes() as $attribute => $value) {
             $cartItem->{$attribute} = $model->{$attribute};
+        }
+        
+        if($options) {
+            foreach ($options as $option => $value) {
+                $cartItem->setAttribute($option, $value);
+            }
         }
 
         if($quantity) {

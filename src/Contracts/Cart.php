@@ -32,10 +32,11 @@ interface Cart
      *
      * @param object $model
      * @param int $quantity
+     * @param array $options
      * @return CartItem
      * @throws InvalidModelInstance | CartAlreadyExists | InvalidCartQuantity
      */
-    public function add(object $model, int $quantity = 1): CartItem;
+    public function add(object $model, int $quantity = 1, array $options = []): CartItem;
 
     /**
      * Remove an item from cart
@@ -51,10 +52,11 @@ interface Cart
      *
      * @param object $model CartItem model
      * @param int | null $quantity CartItem quantity
+     * @param array $options CartItem extras
      * @return CartItem
      * @throws InvalidModelInstance | InvalidCartQuantity | CartNotFound
      */
-    public function update(object $model, int $quantity = null): CartItem;
+    public function update(object $model, int $quantity = null, array $options = []): CartItem;
 
     /**
      * Add quantity of existing item
