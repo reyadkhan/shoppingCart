@@ -95,4 +95,16 @@ class CartReadTest extends TestInit
         Cart::destroy();
         $this->assertEquals(true, Cart::get()->isEmpty());
     }
+    
+    /**
+     * @test
+     */
+    public function can_calculate_discount()
+    {
+        Cart::add($this->model, 2);
+        Cart::setDiscount(10);
+        $subTotal = Cart::subTotal();
+        $totalAmount = round($subTotal - ($subTotal * 10 / 100), 2);
+        $this->assertEquals($totalAmount, Cart::total());
+    }
 }

@@ -77,6 +77,37 @@ interface Cart
      * @throws InvalidCartQuantity | CartNotFound | InvalidModelInstance
      */
     public function removeQuantity(object $model, int $quantity = 1): CartItem;
+    
+    /**
+     * Cart total
+     *
+     * @param int $precision
+     * @return float
+     */
+    public function total(int $precision = 2): float;
+    
+    /**
+     * Cart sub-total
+     *
+     * @param int $precision
+     * @return float
+     */
+    public function subTotal(int $precision = 2): float;
+    
+    /**
+     * Cart get current discount percent
+     *
+     * @return int
+     */
+    public function getDiscount(): int;
+    
+    /**
+     * Set cart discount
+     *
+     * @param int $discountPercent
+     * @return void
+     */
+    public function setDiscount(int $discountPercent): void;
 
     /**
      * Check if cartItem exist in the cart

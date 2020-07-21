@@ -133,4 +133,14 @@ class CartAddTest extends TestInit
         $this->expectException(CartAlreadyExists::class);
         Cart::add($this->model);
     }
+    
+    /**
+     * @test
+     */
+    public function can_set_discount()
+    {
+        Cart::add($this->model, 2);
+        Cart::setDiscount(10);
+        $this->assertEquals(10, Cart::getDiscount());
+    }
 }

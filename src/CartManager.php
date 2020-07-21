@@ -188,9 +188,49 @@ class CartManager implements Cart
      */
     public function total(int $precision = 2): float
     {
+        $subTotal = $this->subTotal($precision);
+        
+        if(isset($this->cart->discount)) {
+            return round($subTotal - ($this->cart->discount * $subTotal / 100), $precision);
+        }
+        return $subTotal;
+    }
+    
+    /**
+     * Cart sub-total
+     *
+     * @param int $precision round precision for float
+     * @return float
+     */
+    public function subTotal(int $precision = 2): float
+    {
         return round($this->cart->sum(function (CartItem $cartItem) {
             return $cartItem->getTotal();
         }), $precision);
+    }
+    
+    /**
+     * Get discount percent
+     *
+     * @return int
+     */
+    public function getDiscount(): int
+    {
+        if(isset($this->cart->discount)) {
+            return $this->cart->discount;
+        }
+        return 0;
+    }
+    
+    /**
+     * Set discount
+     *
+     * @param int $discountPercent
+     * @return void
+     */
+    public function setDiscount(int $discountPercent): void
+    {
+        $this->cart->discount = $discountPercent;
     }
 
     /**
