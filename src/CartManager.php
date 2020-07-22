@@ -282,7 +282,8 @@ class CartManager implements Cart
     {
         $stdObject = new \stdClass();
         $stdObject->sub_total = $this->subTotal();
-        $stdObject->discount = $this->getDiscount();
+        $stdObject->discount_percent = $this->getDiscount();
+        $stdObject->discount_price = $this->discountPrice();
         $stdObject->total = $this->total();
         return $stdObject;
     }
