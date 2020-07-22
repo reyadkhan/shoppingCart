@@ -129,4 +129,18 @@ interface Cart
      * Destroy cart
      */
     public function destroy(): void;
+    
+    /**
+     * Array conversion
+     *
+     * @return array
+     */
+    public function toArray(): array;
+    
+    /**
+     * Get only costs
+     *
+     * @return object
+     */
+    public function getCosts(): object;
 }

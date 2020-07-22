@@ -21,6 +21,8 @@ use WebApp\ShoppingCart\CartItem;
  * @method static bool itemExists(object $model)
  * @method static int count()
  * @method static void destroy()
+ * @method static array toArray()
+ * @method static object getCosts()
  *
  * @see \WebApp\ShoppingCart\CartManager
  * @see \WebApp\ShoppingCart\Contracts\Cart

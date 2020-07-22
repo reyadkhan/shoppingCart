@@ -246,6 +246,39 @@ class CartManager implements Cart
             throw InvalidCartQuantity::create(get_class($model), $quantity);
         }
     }
+    
+    /**
+     * Object to array conversion
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $items = [];
+        foreach ($this->cart as $cartItem) {
+            $items[] = $cartItem->toArray();
+        }
+        
+        return [
+            'count' => $this->count(),
+            extract((array) $this->getCosts()),
+            'items' => $items
+        ];
+    }
+    
+    /**
+     * Cost info
+     *
+     * @return object
+     */
+    public function getCosts(): object
+    {
+        $stdObject = new \stdClass();
+        $stdObject->sub_total = $this->subTotal();
+        $stdObject->discount = $this->getDiscount();
+        $stdObject->total = $this->total();
+        return $stdObject;
+    }
 
     /**
      * Create a new cart item

@@ -2,7 +2,9 @@
 
 namespace WebApp\ShoppingCart;
 
-class CartItem
+use JsonSerializable;
+
+class CartItem implements JsonSerializable
 {
     protected $id, $model_name, $quantity, $price;
     protected $attributes = [];
@@ -148,5 +150,31 @@ class CartItem
         if( ! property_exists($this, $key)) {
             $this->attributes[$key] = $value;
         }
+    }
+    
+    /**
+     * Object to array conversion
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'model_name' => $this->model_name,
+            'price' => $this->price,
+            'quantity' => $this->quantity,
+            extract($this->attributes, EXTR_SKIP)
+        ];
+    }
+    
+    /**
+     * Json serialize
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }
