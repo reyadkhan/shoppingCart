@@ -4,6 +4,7 @@ namespace WebApp\ShoppingCart;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use WebApp\ShoppingCart\Collections\CartCollection;
 use WebApp\ShoppingCart\Contracts\BuyableModel;
 use WebApp\ShoppingCart\Exceptions\CartAlreadyExists;
 use WebApp\ShoppingCart\Exceptions\CartNotFound;
@@ -40,7 +41,7 @@ class CartManager implements Cart
     {
         $this->configs = config('cart');
         $this->sessionManager = new SessionManager($this->configs['session_key']);
-        $this->cart = collect($this->sessionManager->get());
+        $this->cart = new CartCollection($this->sessionManager->get());
         $this->count = $this->cart->count();
     }
 
@@ -408,7 +409,7 @@ class CartManager implements Cart
     public function destroy(): void
     {
         $this->sessionManager->remove();
-        $this->cart = collect();
+        $this->cart = new CartCollection();
         $this->count = 0;
     }
 
