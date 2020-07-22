@@ -188,12 +188,7 @@ class CartManager implements Cart
      */
     public function total(int $precision = 2): float
     {
-        $subTotal = $this->subTotal($precision);
-        
-        if(isset($this->cart->discount)) {
-            return round($subTotal - ($this->cart->discount * $subTotal / 100), $precision);
-        }
-        return $subTotal;
+        return round($this->subTotal($precision) - $this->discountPrice($precision), $precision);
     }
     
     /**
@@ -223,6 +218,17 @@ class CartManager implements Cart
     }
     
     /**
+     * Get discount price
+     *
+     * @param int $precession Float precession
+     * @return float
+     */
+    public function discountPrice(int $precession = 2): float
+    {
+        return round($this->subTotal($precession) * $this->getDiscount() / 100, $precession);
+    }
+    
+    /**
      * Set discount
      *
      * @param int $discountPercent
@@ -231,6 +237,7 @@ class CartManager implements Cart
     public function setDiscount(int $discountPercent): void
     {
         $this->cart->discount = $discountPercent;
+        $this->storeCart();
     }
 
     /**

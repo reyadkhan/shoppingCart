@@ -81,18 +81,18 @@ interface Cart
     /**
      * Cart total
      *
-     * @param int $precision
+     * @param int $precession
      * @return float
      */
-    public function total(int $precision = 2): float;
+    public function total(int $precession = 2): float;
     
     /**
      * Cart sub-total
      *
-     * @param int $precision
+     * @param int $precession
      * @return float
      */
-    public function subTotal(int $precision = 2): float;
+    public function subTotal(int $precession = 2): float;
     
     /**
      * Cart get current discount percent
@@ -108,6 +108,14 @@ interface Cart
      * @return void
      */
     public function setDiscount(int $discountPercent): void;
+    
+    /**
+     * Get disctount price
+     *
+     * @param int $precession
+     * @return float
+     */
+    public function discountPrice(int $precession = 2): float;
 
     /**
      * Check if cartItem exist in the cart
