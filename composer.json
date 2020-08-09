@@ -25,7 +25,10 @@
         "laravel": {
             "providers": [
                 "WebApp\\ShoppingCart\\ShoppingCartServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Cart": "WebApp\\ShoppingCart\\Facades\\Cart"
+            }
         }
     },
     "scripts": {
