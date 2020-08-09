@@ -28,8 +28,6 @@ class ShoppingCartServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/cart.php', 'cart');
 
         $this->app->bind('cart', CartManager::class);
-
-        AliasLoader::getInstance()->alias('Cart', CartFacade::class);
     }
 
     /**
