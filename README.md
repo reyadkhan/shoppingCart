@@ -1,3 +1,3 @@
-# Shopping Cart 
+# Shopping Cart for laravel
 
 Doc is comming soon....
